@@ -6,7 +6,8 @@
 	var top_margin;
   	var left_margin;
   	var static_c2;	// background color for the color picker, or just indicate location
-
+  	var isOverCircle = false;
+  	var new_color;
   	// following variables are for buttons
   	var radius;
   	var isOverCircle;
@@ -23,7 +24,9 @@
   	
   	var stroke_weight = 5;
   	var c1;
-
+  	var draw_color = 'black';
+  	var flag = new Object();
+  	var distances = new Object();
 
   	// console.log(top_margin);
   	// console.log(left_margin);
@@ -49,45 +52,74 @@
       	// create layer for drawing
       	pg = createGraphics(picture_width, picture_height);
 	  	// pg.colorMode(HSB, 100, 100, 100);
-	  	c1 = pg.color('#4286f4');
-	  	pg.background('#ffffff');
+	  	c1 = pg.color(draw_color);
+	  	pg.background('#fff2ee');
 
-	  	// create layer for color picker;
-	  	color_pick = createGraphics(canvas_width * 0.8, canvas_height * 0.1);
-	  	// static_c2 = color_pick.color('#43ad29');
-	  	color_pick.background('#43ad29');
-	  	// color_pick.colorMode(HSB, 100, 100, 100);
+	  	// // create layer for color picker;
+	  	// color_pick = createGraphics(canvas_width * 0.8, canvas_height * 0.1);
+	  	// // static_c2 = color_pick.color('#43ad29');
+	  	// color_pick.background('#fcffee');
+	  	// // color_pick.colorMode(HSB, 100, 100, 100);
 	}
 
 	function draw() {
 		// canvas layer
 	  	background(0);
-	  
+	  	fill('255');
+	   	ellipse(mouseX, mouseY, 20);
+	   	// ellipse(0,0,20)
+
 	  	// drawing layer
-	  	ellipse(mouseX, mouseY, 20);
 	  	image(pg, left_margin, top_margin);
 
-	  	// color picker layer
-	  	// fill('#43ad29');
-	  	// ellipse(mouseX, mouseY, 10);
-	  	image(color_pick, canvas_width * 0.1, canvas_height * 0.9);
-	  	// var c3 = color_pick.color('fff2ee');
-	  	// color_pick.fill();
-	  	// color_pick.ellipse(canvas_width/2, canvas_height/2, 16);
+	  	fill('fff2ee');
+	  	noStroke();
+	  	rect(canvas_width * 0.1, canvas_height * 0.9, canvas_width * 0.8, canvas_height * 0.1);	
+	  	drawButton('red', canvas_width * 0.125, canvas_height * 0.925, 20);
+
+	  	drawButton('blue', canvas_width * 0.125, canvas_height * 0.975, 20);
+
+	  	console.log(flag['red']);
+	  	console.log(flag['blue']);
+
+	  	console.log(distances);
+
+	  	for (var e in distances){
+	  		distance = distances[e];
+	  		if(distance < 10)
+			{
+				console.log('executed');
+				isOverCircle = true;
+				new_color = e;
+			}
+			else {
+				isOverCircle = false;
+			}
+			if(isOverCircle == true)
+			{
+				// fill(100);
+			    cursor(HAND);
+			    break;
+			} 
+			else {
+			    // fill(200); 
+			    cursor(ARROW); 
+			}
+	  	}
 
 	}
 
 
 
 	function mouseDragged() {
-  		c1 = pg.color('#4286f4');
-  		pg.fill(c1);
-  		pg.stroke('#4286f4');
+  		c1 = pg.color(draw_color);
+  		pg.fill('c1');
+  		pg.stroke(draw_color);
   		pg.strokeWeight(stroke_weight);
 	  	// pg.noSmooth();
+
 	  	pg.line((pmouseX-left_margin)/2, (pmouseY-top_margin)/2, (mouseX-left_margin)/2, (mouseY-top_margin)/2);
-	  	// pg.strokeWeight(1);
-	  	// pg.ellipse((mouseX-margin)/2, (mouseY-margin)/2, 4);
+
 
 	  
 	}
@@ -96,13 +128,33 @@
 
 	}
 
-	function createButton(_color, x, y) {
-		color_pick.ellipseMode(CENTER);
-		color_pick.noStroke();
-		color_pick.fill('red');
-		button = color_pick.ellipse(x, y, 15, 15);
+	function drawButton(_color, x_pos, y_pos, radius) {
+			  
+		// draw a circle
+		ellipseMode(CENTER);
+		stroke(0);
+		strokeWeight(1);
+		fill(_color);
+		ellipse(x_pos, y_pos, radius);
+
+
+		flag[_color] = new Object();
+
+		flag[_color].x = x_pos;
+		flag[_color].y = y_pos;
+
+		distances[_color] = dist(mouseX, mouseY, x_pos, y_pos);
 	}
 
+	function mousePressed()
+		{
+
+			if (isOverCircle == true){
+				console.log('in mousePressed, isOverCircle = ' + isOverCircle);
+				console.log('new_color = ' + new_color);
+				draw_color = new_color;
+			}
+		}
 
 
 
