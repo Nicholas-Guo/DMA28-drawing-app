@@ -31,6 +31,7 @@ var red_slider;
 var green_slider;
 var blue_slider;
 
+var weight_slider;
 
 
 
@@ -55,7 +56,7 @@ function setup() {
 	c1 = pg.color(draw_color);
 	pg.background('#fff2ee');
 
-	// create slider
+	// create color slider
 	var slider_width = canvas_width * 0.25;
 
 	red_slider = createSlider(0, 255, 0);
@@ -69,7 +70,16 @@ function setup() {
 	blue_slider = createSlider(0, 255, 0);
 	blue_slider.position(canvas_width * 0.5, canvas_height * 0.97);
 	blue_slider.style('width', slider_width + 'px');
+
+	// create weight slider for line
+
+	weight_slider = createSlider(1, 20, 5);
+	weight_slider.position(.04 * canvas_width, top_margin + 0.05 * picture_height);
+	weight_slider.style('width', .05 * canvas_width + 'px');
 }
+
+
+
 
 function draw() {
 	// canvas layer
@@ -100,7 +110,6 @@ function draw() {
 	buttons['slider'].color.g = green_slider.value();
 	buttons['slider'].color.b = blue_slider.value();
 
-	// distances['slider'] = ;
 
 
   	fill(red_slider.value(), blue_slider.value(), green_slider.value());
@@ -162,9 +171,14 @@ function draw() {
 			}
   		}
   		
-  	// }
 	  	
+  	fill('255');
+  	noStroke();
+	rect(canvas_width * 0.03, top_margin, 0.07 * canvas_width, picture_height, 20, 0, 0, 20);
 
+	fill(0);
+	// textAlign(RIGHT);
+	text('stroke weight', .041 * canvas_width, top_margin + 0.04 * picture_height);
 }
 
 
@@ -178,10 +192,7 @@ function mousePressed() {
 		console.log('new_color = ' + new_color);
 		draw_color = new_color;
 	}
-	// else{
-	// 	console.log('slider is executed');
- //  		draw_color = color(red_slider.value(), blue_slider.value(), green_slider.value());
-	// }
+
 }
 
 
@@ -189,6 +200,7 @@ function mouseDragged() {
 	c1 = pg.color(draw_color);
   	pg.fill('c1');
   	pg.stroke(draw_color);
+  	stroke_weight = weight_slider.value();
   	pg.strokeWeight(stroke_weight);
 	pg.strokeJoin(ROUND);
 
@@ -225,14 +237,7 @@ function rgb_hex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-function isOnRect(rect_x, rect_y, rect_width, rect_height){
-	// if (mouseX >= rect_x && mouseX <= rect_x+rect_width && mouseY >= rect_y && mouseY <= rect_y+rect_height) 
- //  {
- //    isOverRectangle = true;
- //  } else {
- //    isOverRectangle = false;
- //  }
-}
+
 
 
 function keyTyped() {
