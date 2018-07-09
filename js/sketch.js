@@ -6,17 +6,16 @@
 	var top_margin;
   	var left_margin;
   	var static_c2;	// background color for the color picker, or just indicate location
+
+	var buttons = new Object();
+  	var distances = new Object();
+
+  	// following variables are for buttons
+  	var radius
   	var isOverCircle = false;
   	var new_color;
-  	// following variables are for buttons
-  	var radius;
-  	var isOverCircle;
-	// var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
-	// var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-
-
-
+	
   	// parameters user may want to change
   	
   	var picture_height;
@@ -25,11 +24,11 @@
   	var stroke_weight = 5;
   	var c1;
   	var draw_color = 'black';
-  	var flag = new Object();
-  	var distances = new Object();
-
-  	// console.log(top_margin);
-  	// console.log(left_margin);
+  	
+  	//  variables for slider
+  	var red_slider;
+  	var green_slider;
+  	var blue_slider;
 
 
 
@@ -55,17 +54,18 @@
 	  	c1 = pg.color(draw_color);
 	  	pg.background('#fff2ee');
 
-	  	// // create layer for color picker;
-	  	// color_pick = createGraphics(canvas_width * 0.8, canvas_height * 0.1);
-	  	// // static_c2 = color_pick.color('#43ad29');
-	  	// color_pick.background('#fcffee');
-	  	// // color_pick.colorMode(HSB, 100, 100, 100);
+	  	// create slider
+	  	red_slider = createSlider(0, 255, 0);
+	  	red_slider.position(canvas_width * 0.77, canvas_height * 0.925);
+	  	green_slider = createSlider(0, 255, 0);
+	  	green_slider.position(canvas_width * 0.77, canvas_height * 0.95);
+	  	blue_slider = createSlider(0, 255, 0);
+	  	blue_slider.position(canvas_width * 0.77, canvas_height * 0.975);
 	}
 
 	function draw() {
 		// canvas layer
 	  	background(0);
-	  	fill('255');
 	   	ellipse(mouseX, mouseY, 20);
 	   	// ellipse(0,0,20)
 
@@ -79,16 +79,16 @@
 
 	  	drawButton('blue', canvas_width * 0.125, canvas_height * 0.975, 20);
 
-	  	console.log(flag['red']);
-	  	console.log(flag['blue']);
+	  	// console.log(buttons['red']);
+	  	// console.log(buttons['blue']);
 
-	  	console.log(distances);
+	  	// console.log(distances);
 
 	  	for (var e in distances){
 	  		distance = distances[e];
 	  		if(distance < 10)
 			{
-				console.log('executed');
+				// console.log('executed');
 				isOverCircle = true;
 				new_color = e;
 			}
@@ -107,6 +107,8 @@
 			}
 	  	}
 
+	  
+
 	}
 
 
@@ -116,7 +118,7 @@
   		pg.fill('c1');
   		pg.stroke(draw_color);
   		pg.strokeWeight(stroke_weight);
-	  	// pg.noSmooth();
+	  	pg.strokeJoin(ROUND);
 
 	  	pg.line((pmouseX-left_margin)/2, (pmouseY-top_margin)/2, (mouseX-left_margin)/2, (mouseY-top_margin)/2);
 
@@ -138,10 +140,10 @@
 		ellipse(x_pos, y_pos, radius);
 
 
-		flag[_color] = new Object();
+		buttons[_color] = new Object();
 
-		flag[_color].x = x_pos;
-		flag[_color].y = y_pos;
+		buttons[_color].x = x_pos;
+		buttons[_color].y = y_pos;
 
 		distances[_color] = dist(mouseX, mouseY, x_pos, y_pos);
 	}
@@ -153,6 +155,10 @@
 				console.log('in mousePressed, isOverCircle = ' + isOverCircle);
 				console.log('new_color = ' + new_color);
 				draw_color = new_color;
+			}
+			else{
+				// console.log('slider is executed');
+	  			draw_color = color(red_slider.value(), blue_slider.value(), green_slider.value());
 			}
 		}
 
