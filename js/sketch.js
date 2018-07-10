@@ -1,5 +1,9 @@
 // these shouldn't be modified by users
+// layers
 var pg;
+var track_layer;
+
+
 var color_pick;
 var canvas_height;
 var canvas_width;
@@ -24,7 +28,7 @@ var picture_width;
   	
 var stroke_weight = 5;
 var c1;
-var draw_color = 'black';
+var draw_color = '#000000';
   	
 //  variables for slider
 var red_slider;
@@ -33,6 +37,13 @@ var blue_slider;
 
 var weight_slider;
 
+
+// variables for special effects
+var isMirror = false;
+var isGradient = false;
+
+var c1_y;
+var c2_y;
 
 
 function setup() {
@@ -52,6 +63,7 @@ function setup() {
 
     // create layer for drawing
     pg = createGraphics(picture_width, picture_height);
+    track_layer = createGraphics(picture_width, picture_height);
 	// pg.colorMode(HSB, 100, 100, 100);
 	c1 = pg.color(draw_color);
 	pg.background('#fff2ee');
@@ -76,6 +88,20 @@ function setup() {
 	weight_slider = createSlider(1, 20, 5);
 	weight_slider.position(.04 * canvas_width, top_margin + 0.05 * picture_height);
 	weight_slider.style('width', .05 * canvas_width + 'px');
+
+	// setup smmetry checkbox
+	var checkbox1 = createCheckbox('mirror');
+	// console.log(checkbox1);
+	c1_y = top_margin + 0.15 * picture_height;
+	checkbox1.position(.04 *  canvas_width, c1_y);
+	checkbox1.checked();
+	checkbox1.changed(myCheckedEvent);
+
+	var checkbox2 = createCheckbox('gradient');
+	c2_y = top_margin + 0.25 * picture_height
+	checkbox2.position(.04 * canvas_width, c2_y);
+	checkbox2.checked();
+	checkbox2.changed(myCheckedEvent);
 }
 
 
@@ -89,6 +115,7 @@ function draw() {
 
   	// drawing layer
   	image(pg, left_margin, top_margin);
+  	image(track_layer, left_margin, top_margin);
 
   	fill(255);
   	noStroke();
@@ -116,21 +143,21 @@ function draw() {
   	rect(canvas_width * 0.76, canvas_height * 0.91, canvas_width * 0.13, canvas_height * 0.08, 20);
 
   	// draw buttons
-  	drawButton('red', canvas_width * 0.15, canvas_height * 0.925, 28);
+  	drawButton('#ff0000', canvas_width * 0.15, canvas_height * 0.925, canvas_height * 0.03);
 
-  	drawButton('blue', canvas_width * 0.15, canvas_height * 0.975, 28);
+  	drawButton('#0000ff', canvas_width * 0.15, canvas_height * 0.975, canvas_height * 0.03);
 
-  	drawButton('green', canvas_width * 0.25, canvas_height * 0.925, 28);
+  	drawButton('#00ff00', canvas_width * 0.25, canvas_height * 0.925, canvas_height * 0.03);
 
-  	drawButton('grey', canvas_width * 0.25, canvas_height * 0.975, 28);
+  	drawButton('#808080', canvas_width * 0.25, canvas_height * 0.975, canvas_height * 0.03);
 
-  	drawButton('pink', canvas_width * 0.35, canvas_height * 0.925, 28);
+  	drawButton('#ffc0cb', canvas_width * 0.35, canvas_height * 0.925, canvas_height * 0.03);
 
-  	drawButton('purple', canvas_width * 0.35, canvas_height * 0.975, 28);
+  	drawButton('#800080', canvas_width * 0.35, canvas_height * 0.975, canvas_height * 0.03);
 
-  	drawButton('yellow', canvas_width * 0.45, canvas_height * 0.925, 28);
+  	drawButton('#ffff00', canvas_width * 0.45, canvas_height * 0.925, canvas_height * 0.03);
 
-  	drawButton('maroon', canvas_width * 0.45, canvas_height * 0.975, 28);
+  	drawButton('#800000', canvas_width * 0.45, canvas_height * 0.975, canvas_height * 0.03);
 
 
   	// console.log(buttons);
@@ -150,7 +177,7 @@ function draw() {
   			
   			distance = distances[e];
   			if (e == 'slider') {
-  				e = rgb_hex(buttons['slider'].color.r, buttons['slider'].color.b, buttons['slider'].color.g);
+  				e = rgbToHex(buttons['slider'].color.r, buttons['slider'].color.b, buttons['slider'].color.g);
   			}
 	  		if(distance < 10) {
 				// console.log('executed');
@@ -185,6 +212,73 @@ function draw() {
 
 
 
+function mouseDragged() {
+	
+	c1 = pg.color(draw_color);
+  	pg.fill('c1');
+  	pg.stroke(draw_color);
+  	stroke_weight = weight_slider.value();
+  	pg.strokeWeight(stroke_weight);
+	pg.strokeJoin(ROUND);
+
+
+	// 111111
+	// if (isGradient) {
+	// 	console.log('isGradient executed');
+	// 	console.log('hex = ' + draw_color);
+
+
+	// 	// if (typeof(draw_color) == str) {
+	// 	console.log('typeof(draw_color) = ' + typeof(draw_color));
+	// 	console.log('draw_color = ' + draw_color);
+
+	// 	var rgb = hexToRgb(draw_color.substring(1));
+
+	// 	console.log('rgb = ' + rgb);
+	// 	var r, g, b;
+	// 	var rgb_obj = rgb.split(',');
+	// 	r = rgb_obj[0];
+	// 	g = rgb_obj[1];
+	// 	b = rgb_obj[2];
+	// 	console.log('r = ' + r);
+
+	// 	var hsl = rgbToHsl(r, g, b);
+	// 	var h, s, l;
+	// 	h = hsl[0];
+	// 	s = hsl[1];
+	// 	l = hsl[2];
+	// 	console.log('hsl = ' +hsl);
+
+
+	// 	var draw_color_new;
+	// 	pg.colorMode(HSL, 360, 100, 100, 1);
+	// 	track_layer.colorMode(HSL, 360, 100, 100, 1);
+	// 	draw_color_new = (h, 100, 100, 1);
+	// 	console.log(draw_color_new)
+	// 	c1 = pg.color(draw_color_new);
+	// 	pg.stroke(draw_color_new);
+	// 	track_layer.stroke(draw_color_new);
+	// 	// }
+		
+
+	// }
+
+	
+// 
+	if (isMirror) {
+		console.log('mirror!');
+		track_layer.stroke(draw_color);
+		track_layer.strokeWeight(stroke_weight);
+		pg.line((pmouseX-left_margin)/2, (pmouseY-top_margin)/2, (mouseX-left_margin)/2, (mouseY-top_margin)/2);	
+		track_layer.line((canvas_width - pmouseX - left_margin)/2, (canvas_height - (pmouseY) - top_margin)/2, (canvas_width - (mouseX) - left_margin)/2, (canvas_height - (mouseY) - top_margin)/2);
+	}
+
+	pg.line((pmouseX-left_margin)/2, (pmouseY-top_margin)/2, (mouseX-left_margin)/2, (mouseY-top_margin)/2);	
+
+  
+}
+ 
+
 function mousePressed() {
 
 	if (isOverCircle == true || isOverRectangle == true){
@@ -194,20 +288,6 @@ function mousePressed() {
 	}
 
 }
-
-
-function mouseDragged() {
-	c1 = pg.color(draw_color);
-  	pg.fill('c1');
-  	pg.stroke(draw_color);
-  	stroke_weight = weight_slider.value();
-  	pg.strokeWeight(stroke_weight);
-	pg.strokeJoin(ROUND);
-
-	pg.line((pmouseX-left_margin)/2, (pmouseY-top_margin)/2, (mouseX-left_margin)/2, (mouseY-top_margin)/2);
-  
-}
- 
 
 
 function drawButton(_color, x_pos, y_pos, radius) {
@@ -228,20 +308,83 @@ function drawButton(_color, x_pos, y_pos, radius) {
 	distances[_color] = dist(mouseX, mouseY, x_pos, y_pos);
 }
 
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
 
-function rgb_hex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
 
+function myCheckedEvent() {
+
+    if (this.checked) {
+    	// console.log(this);
+    	console.log("It's checked!");
+    	this.checked = false;
+    	if (this.y == c1_y) {
+    		isMirror = true;
+    	}
+    	if (this.y == c2_y) {
+    		isGradient = true;
+    	}
+
+    } else {
+    	console.log("It's not checked!");
+    	this.checked = true;
+    	if (this.y == c1_y) {
+    		isMirror = false;
+    	}
+    	if (this.y == c2_y) {
+    		isGradient = false;
+    	}
+    }
+}
 
 
 
 function keyTyped() {
 
+}
+
+
+// following functions are adapted from https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb and https://gist.github.com/mjackson/5311256
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+
+
+function rgbToHsl(r, g, b) {
+    r /= 255, g /= 255, b /= 255;
+
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+
+    if (max == min) {
+      h = s = 0; // achromatic
+    } else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+
+      h /= 6;
+    }
+
+    return [ h, s, l ];
+}
+
+function hexToRgb(hex) {
+    var arrBuff = new ArrayBuffer(4);
+    var vw = new DataView(arrBuff);
+    vw.setUint32(0,parseInt(hex, 16),false);
+    var arrByte = new Uint8Array(arrBuff);
+
+    return arrByte[1] + "," + arrByte[2] + "," + arrByte[3];
 }
 // function windowResized() {
 // 	resizeCanvas(windowWidth, windowHeight);
