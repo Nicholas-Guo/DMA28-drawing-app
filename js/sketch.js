@@ -449,5 +449,10 @@ function Star(x,y,m) {
 
 
 
+// idea of generating tree comes from alexandrejosephdev of CodePen
+// algorithm of mimicking force and gravity adapted from The Nature of Code by DANIEL SHIFFMAN
+
+
+
 
 
