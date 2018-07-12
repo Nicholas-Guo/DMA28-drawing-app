@@ -12,8 +12,7 @@ var n_branch;
 
 var tree_layer;
 var new_tree = 0;
-var count = 0;
-
+var padding;
 
 
 
@@ -107,9 +106,12 @@ function draw() {
 
   if (mouseY < height/2) {
     if (new_sand == true) {
-    var new_particle = new Particle(random(width), random(height*2/3), random(1, 5))
+      for (var i = 0; i < 10; i++) {
+        var new_particle = new Particle(random(width), random(height*2/3), random(1, 5))
     
-    Container.push(new_particle);
+        Container.push(new_particle);
+      }
+    
     new_sand = false;
     // console.log('generated');
   }
@@ -174,6 +176,7 @@ function draw() {
 
 function keyTyped() {
   if (key == 't') {
+    padding = random(-width/2, width/2);
     n_branch = random(100, 120)
 
   }
@@ -212,7 +215,7 @@ function generateTree(length) {
     // colorMode(RGB);
     tree_layer.stroke(100,200,0);
     push();
-    tree_layer.translate(window.innerWidth/2, height);
+    tree_layer.translate(window.innerWidth/2 + padding, height);
     branch(length);
     pop();
     
